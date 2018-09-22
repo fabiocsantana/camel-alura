@@ -14,10 +14,11 @@ public class RotaPedidos {
 			@Override
 			public void configure() throws Exception {
 				from("file:pedidos?delay=5s&noop=true").
-				log("${id}").
+				split().xpath("/pedido/itens/item").
+				filter().xpath("/item/formato[text()='EBOOK']").
 				marshal().xmljson().
 				setHeader("CamelFileName", simple("${file:name.noext}.json")).
-				log("${body}").
+  			    log("${id} : ${body}").
 				to("file:saida");
 			}
 		});
